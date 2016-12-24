@@ -129,10 +129,10 @@ func initFSM() *StateMachine {
 	delegate := &DefaultDelegate{p: &TurnstileEventProcessor{}}
 
 	transitions := []Transition{
-		Transition{From: "Locked", Event: "Coin", To: "Unlocked", Action: "check"},
-		Transition{From: "Locked", Event: "Push", To: "Locked", Action: "invalid-push"},
-		Transition{From: "Unlocked", Event: "Push", To: "Locked", Action: "pass"},
-		Transition{From: "Unlocked", Event: "Coin", To: "Unlocked", Action: "repeat-check"},
+		{From: "Locked", Event: "Coin", To: "Unlocked", Action: "check"},
+		{From: "Locked", Event: "Push", To: "Locked", Action: "invalid-push"},
+		{From: "Unlocked", Event: "Push", To: "Locked", Action: "pass"},
+		{From: "Unlocked", Event: "Coin", To: "Unlocked", Action: "repeat-check"},
 	}
 
 	return NewStateMachine(delegate, transitions...)
