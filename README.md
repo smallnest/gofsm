@@ -28,7 +28,7 @@ github已经有了很多个状态机的实现，比如文末列举的一些，�
 ![图片来源 wikipedia](http://colobu.com/2016/12/24/a-featured-fsm/turnstile.jpg)
 
 如果我们抽象出来它的状态图，可以用下图表示：
-![图片来源 wikipedia](http://colobu.com/2016/12/24/a-featured-fsm/tcpfsm.png)
+![图片来源 wikipedia](http://colobu.com/2016/12/24/a-featured-fsm/wiki-fsm.png)
 
 它有两个状态：`Locked`、`Unlocked`。有两个输入（input）会影响它的状态，投币(coin)和推动转臂（push）。
 1. 在Locked状态， push没有作用。不管比push多少次闸门的状态还是lock
