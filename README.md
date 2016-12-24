@@ -1,3 +1,7 @@
+[![License](https://img.shields.io/:license-apache-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![GoDoc](https://godoc.org/github.com/smallnest/gofsm?status.png)](http://godoc.org/github.com/smallnest/gofsm)  ![travis](https://travis-ci.org/smallnest/gofsm.svg?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/smallnest/gofsm)](https://goreportcard.com/report/github.com/smallnest/gofsm)
+
+
+
 [gofsm](https://github.com/smallnest/gofsm)是一个简单、小巧而又特色的有限状态机（FSM）。
 
 github已经有了很几个状态机的实现，比如下面的几个，还为什么要再发明轮子呢？
