@@ -1,4 +1,9 @@
-//参考了 https://github.com/elimisteve/fsm 的实现
+// gofsm is a simple, featured FSM implementation that has some different features with other FSM implementation.
+// One feature of gofsm is it doesn't persist/keep states of objects. When it processes transitions, you must pass current states to id, so you can look gofsm as a "stateless" state machine. This benefit is one gofsm instance can be used to handle transitions of a lot of object instances, instead of creating a lot of FSM instances. Object instances maintain their states themselves.
+// Another feature is it provides a common interface for Moore and Mealy FSM. You can implement corresponding methods (OnExit, Action, OnEnter) for those two FSM.
+// The third interesting feature is you can export configured transitions into a state diagram. A picture is worth a thousand words.
+
+// Style of gofsm refers to implementation of https://github.com/elimisteve/fsm.
 
 package fsm
 
@@ -8,7 +13,7 @@ import (
 	"strings"
 )
 
-// Transition 代表一个转换。所有的数据都是以字符串字面量表示的，这样可以简化状态机的实现。
+// Transition is a state transition and all data are literal values that simplifies FSM usage and make it generic.
 type Transition struct {
 	From   string
 	Event  string
@@ -16,19 +21,13 @@ type Transition struct {
 	Action string
 }
 
-// Delegate 用来执行特定的action. 它可以根据action的字符串字面量以及补充参数执行特定的动作。
-// Action的执行可以是同步的，也可以是异步的，在同步的情况下会阻塞对事件的处理。
-// 在处理的时候处理函数可以检查对象的状态是否和fromState一致，如果不一致需要根据业务自行处理或者报错。
-// fromState 和 toState 可以相同，这种情况下对象的状态不发生改变，只是需要处理事件而已。
+// Delegate is used to process actions. Because gofsm uses literal values as event, state and action, you need to handle them with corresponding functions. DefaultDelegate is the default delegate implementation that splits the processing into three actions: OnExit Action, Action and OnEnter Action. you can implement different delegates.
 type Delegate interface {
-	// HandleEvent 处理事件和转换
+	// HandleEvent handles transitions
 	HandleEvent(action string, fromState string, toState string, args []interface{})
 }
 
-// StateMachine 用来代表状态机对象。当我们说状态的时候，肯定指的是某个对象的状态，我们要处理的就是触发这个对象的事件和这个对象的状态的改变。
-// StateMachine 本身不保存对象的当前状态,所以它可以处理N个对象的状态转换，这也要求对象必须传入自己当前的状态。
-// 因此这个StateMachine对象也可以称之为 “对象无关" 的状态机。
-// 转换时执行的特定动作通过 delegate 实现。
+// StateMachine is a FSM that can handle transitions of a lot of objects. delegate and transitions are configured before use them.
 type StateMachine struct {
 	delegate    Delegate
 	transitions []Transition
@@ -58,12 +57,12 @@ func (e smError) CurrentState() string {
 	return e.currentState
 }
 
-// NewStateMachine 创建一个新的状态机
+// NewStateMachine creates a new state machine.
 func NewStateMachine(delegate Delegate, transitions ...Transition) *StateMachine {
 	return &StateMachine{delegate: delegate, transitions: transitions}
 }
 
-// Trigger 处理一个事件
+// Trigger fires a event. You must pass current state of the processing object, other info about this object can be passed with args.
 func (m *StateMachine) Trigger(currentState string, event string, args ...interface{}) Error {
 	trans := m.findTransMatching(currentState, event)
 	if trans == nil {
@@ -76,7 +75,7 @@ func (m *StateMachine) Trigger(currentState string, event string, args ...interf
 	return nil
 }
 
-// findTransMatching 根据输入(event)和当前状态找到转换对象。
+// findTransMatching gets corresponding transition according to current state and event.
 func (m *StateMachine) findTransMatching(fromState string, event string) *Transition {
 	for _, v := range m.transitions {
 		if v.From == fromState && v.Event == event {
@@ -86,12 +85,12 @@ func (m *StateMachine) findTransMatching(fromState string, event string) *Transi
 	return nil
 }
 
-// Export 输出状态图到指定的文件
+// Export exports the state diagram into a file.
 func (m *StateMachine) Export(outfile string) error {
 	return m.ExportWithDetails(outfile, "png", "dot", "72", "-Gsize=10,5 -Gdpi=200")
 }
 
-// ExportWithDetails 输出状态图，提供更多的graphviz参数
+// ExportWithDetails  exports the state diagram with more graphviz options.
 func (m *StateMachine) ExportWithDetails(outfile string, format string, layout string, scale string, more string) error {
 	dot := `digraph StateMachine {
 

@@ -17,7 +17,7 @@ type Turnstile struct {
 	States     []string
 }
 
-// 转门的事件处理
+// TurnstileEventProcessor is used to handle turnstile actions.
 type TurnstileEventProcessor struct{}
 
 func (p *TurnstileEventProcessor) OnExit(fromState string, args []interface{}) {

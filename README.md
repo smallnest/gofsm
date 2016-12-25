@@ -217,7 +217,7 @@ func (m *StateMachine) ExportWithDetails(outfile string, format string, layout s
 * [Zumata/fsm](https://github.com/Zumata/fsm)
 * [syed/go-fsm](https://github.com/syed/go-fsm)
 * [go-rut/fsm](https://github.com/go-rut/fsm)
-* [yandd/fsm]https://github.com/yandd/fsm)
+* [yandd/fsm](https://github.com/yandd/fsm)
 * [go-trellis/fsm](https://github.com/go-trellis/fsm)
 * ……
 

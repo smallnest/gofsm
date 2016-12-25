@@ -1,18 +1,22 @@
 package fsm
 
-// EventProcessor 接口定义了OnExit和OnEnter的hook.
+// EventProcessor defines OnExit, Action and OnEnter actions.
 type EventProcessor interface {
+	// OnExit Action handles exiting a state
 	OnExit(fromState string, args []interface{})
+	// Action is used to handle transitions
 	Action(action string, fromState string, toState string, args []interface{})
+	// OnExit Action handles entering a state
 	OnEnter(toState string, args []interface{})
 }
 
-// DefaultDelegate 在处理Event的时候，将事件的处理分成三步，提供了调用OnExit和OnEnter的hook的功能.
+// DefaultDelegate is a default delegate.
+// it splits processing of actions into three actions: OnExit, Action and OnEnter.
 type DefaultDelegate struct {
 	p EventProcessor
 }
 
-// HandleEvent 将处理事件分成三部步，退出前一个状态OnExit， 执行Action 和 进入下一个状态OnEnter.
+// HandleEvent implements Delegate interface and split HandleEvent into three actions.
 func (dd *DefaultDelegate) HandleEvent(action string, fromState string, toState string, args []interface{}) {
 	if fromState != toState {
 		dd.p.OnExit(fromState, args)
