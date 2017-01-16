@@ -2,10 +2,8 @@ package fsm
 
 import (
 	"fmt"
-
+	"log"
 	"testing"
-
-	"github.com/lunny/log"
 )
 
 type Turnstile struct {
@@ -26,7 +24,7 @@ func (p *TurnstileEventProcessor) OnExit(fromState string, args []interface{}) {
 		panic(fmt.Errorf("转门 %v 的状态与期望的状态 %s 不一致，可能在状态机外被改变了", t, fromState))
 	}
 
-	log.Infof("转门 %d 从状态 %s 改变", t.ID, fromState)
+	log.Printf("转门 %d 从状态 %s 改变", t.ID, fromState)
 }
 
 func (p *TurnstileEventProcessor) Action(action string, fromState string, toState string, args []interface{}) {
@@ -47,7 +45,7 @@ func (p *TurnstileEventProcessor) OnEnter(toState string, args []interface{}) {
 	t.State = toState
 	t.States = append(t.States, toState)
 
-	log.Infof("转门 %d 的状态改变为 %s ", t.ID, toState)
+	log.Printf("转门 %d 的状态改变为 %s ", t.ID, toState)
 }
 
 func TestFSM(t *testing.T) {
@@ -126,7 +124,7 @@ func compareTurnstile(t1 *Turnstile, t2 *Turnstile) bool {
 }
 
 func initFSM() *StateMachine {
-	delegate := &DefaultDelegate{p: &TurnstileEventProcessor{}}
+	delegate := &DefaultDelegate{P: &TurnstileEventProcessor{}}
 
 	transitions := []Transition{
 		{From: "Locked", Event: "Coin", To: "Unlocked", Action: "check"},

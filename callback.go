@@ -13,18 +13,18 @@ type EventProcessor interface {
 // DefaultDelegate is a default delegate.
 // it splits processing of actions into three actions: OnExit, Action and OnEnter.
 type DefaultDelegate struct {
-	p EventProcessor
+	P EventProcessor
 }
 
 // HandleEvent implements Delegate interface and split HandleEvent into three actions.
 func (dd *DefaultDelegate) HandleEvent(action string, fromState string, toState string, args []interface{}) {
 	if fromState != toState {
-		dd.p.OnExit(fromState, args)
+		dd.P.OnExit(fromState, args)
 	}
 
-	dd.p.Action(action, fromState, toState, args)
+	dd.P.Action(action, fromState, toState, args)
 
 	if fromState != toState {
-		dd.p.OnEnter(toState, args)
+		dd.P.OnEnter(toState, args)
 	}
 }
