@@ -86,7 +86,7 @@ type Turnstile struct {
 状态机的初始化简单直接：
 ```go 
 func initFSM() *StateMachine {
-	delegate := &DefaultDelegate{p: &TurnstileEventProcessor{}}
+	delegate := &DefaultDelegate{P: &TurnstileEventProcessor{}}
 
 	transitions := []Transition{
 		Transition{From: "Locked", Event: "Coin", To: "Unlocked", Action: "check"},
