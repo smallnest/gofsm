@@ -1,6 +1,10 @@
-[![License](https://img.shields.io/:license-apache-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![GoDoc](https://godoc.org/github.com/smallnest/gofsm?status.png)](http://godoc.org/github.com/smallnest/gofsm)  ![travis](https://travis-ci.org/smallnest/gofsm.svg?branch=master) [![Coverage](http://gocover.io/_badge/github.com/smallnest/gofsm)](http://gocover.io/github.com/smallnest/gofsm) [![Go Report Card](https://goreportcard.com/badge/github.com/smallnest/gofsm)](https://goreportcard.com/report/github.com/smallnest/gofsm)
+# gofsm
 
-
+[![License](https://img.shields.io/:license-apache-blue.svg)](LECENSE)
+[![GoDoc](https://godoc.org/github.com/smallnest/gofsm?status.png)](http://godoc.org/github.com/smallnest/gofsm)
+![travis](https://travis-ci.org/smallnest/gofsm.svg?branch=master)
+[![Coverage](http://gocover.io/_badge/github.com/smallnest/gofsm)](http://gocover.io/github.com/smallnest/gofsm)
+[![Go Report Card](https://goreportcard.com/badge/github.com/smallnest/gofsm)](https://goreportcard.com/report/github.com/smallnest/gofsm)
 
 [gofsm](https://github.com/smallnest/gofsm)是一个简单、小巧而又特色的有限状态机（FSM）。
 
@@ -84,7 +88,7 @@ type Turnstile struct {
 ```
 
 状态机的初始化简单直接：
-```go 
+```go
 func initFSM() *StateMachine {
 	delegate := &DefaultDelegate{P: &TurnstileEventProcessor{}}
 
@@ -107,7 +111,7 @@ func initFSM() *StateMachine {
 如果Action为空，也就是不需要处理事件，只是发生状态的改变而已。
 
 处理Action的类型如下：
-```go 
+```go
 type TurnstileEventProcessor struct{}
 
 func (p *TurnstileEventProcessor) OnExit(fromState string, args []interface{}) {
@@ -197,7 +201,7 @@ func (p *TurnstileEventProcessor) OnEnter(toState string, args []interface{}) {
 生成的图片就是文首的闸门的状态机的图片。
 
 如果你想定制graphviz的参数，你可以调用另外一个方法：
-```go 
+```go
 func (m *StateMachine) ExportWithDetails(outfile string, format string, layout string, scale string, more string) error
 ```
 
