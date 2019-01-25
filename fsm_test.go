@@ -1,9 +1,12 @@
 package fsm
 
 import (
+	"errors"
 	"fmt"
 	"log"
+	"math/rand"
 	"testing"
+	"time"
 )
 
 type Turnstile struct {
@@ -27,7 +30,7 @@ func (p *TurnstileEventProcessor) OnExit(fromState string, args []interface{}) {
 	log.Printf("转门 %d 从状态 %s 改变", t.ID, fromState)
 }
 
-func (p *TurnstileEventProcessor) Action(action string, fromState string, toState string, args []interface{}) {
+func (p *TurnstileEventProcessor) Action(action string, fromState string, toState string, args []interface{}) error {
 	t := args[0].(*Turnstile)
 	t.EventCount++
 
@@ -35,9 +38,15 @@ func (p *TurnstileEventProcessor) Action(action string, fromState string, toStat
 	case "pass": //用户通过的action
 		t.PassCount++
 	case "check", "repeat-check": //刷卡或者投币的action
+		if t.CoinCount > 0 { // repeat-check
+			return errors.New("转门暂时故障")
+		}
+
 		t.CoinCount++
 	default: //其它action
 	}
+
+	return nil
 }
 
 func (p *TurnstileEventProcessor) OnEnter(toState string, args []interface{}) {
@@ -48,7 +57,15 @@ func (p *TurnstileEventProcessor) OnEnter(toState string, args []interface{}) {
 	log.Printf("转门 %d 的状态改变为 %s ", t.ID, toState)
 }
 
+func (p *TurnstileEventProcessor) OnActionFailure(action string, fromState string, toState string, args []interface{}, err error) {
+	t := args[0].(*Turnstile)
+
+	log.Printf("转门 %d 的状态从 %s to %s 改变失败， 原因: %v", t.ID, fromState, toState, err)
+}
+
 func TestFSM(t *testing.T) {
+	rand.Seed(time.Now().UnixNano())
+
 	ts := &Turnstile{
 		ID:     1,
 		State:  "Locked",
@@ -78,10 +95,10 @@ func TestFSM(t *testing.T) {
 	}
 
 	//刷卡或者投币
-	//这时才解锁
+	//无用的投币, 测试Action执行失败
 	err = fsm.Trigger(ts.State, "Coin", ts)
 	if err != nil {
-		t.Errorf("trigger err: %v", err)
+		t.Logf("trigger err: %v", err)
 	}
 
 	//推门
@@ -101,7 +118,7 @@ func TestFSM(t *testing.T) {
 	lastState := Turnstile{
 		ID:         1,
 		EventCount: 6,
-		CoinCount:  2,
+		CoinCount:  1,
 		PassCount:  1,
 		State:      "Locked",
 		States:     []string{"Locked", "Unlocked", "Locked"},

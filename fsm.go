@@ -24,7 +24,7 @@ type Transition struct {
 // Delegate is used to process actions. Because gofsm uses literal values as event, state and action, you need to handle them with corresponding functions. DefaultDelegate is the default delegate implementation that splits the processing into three actions: OnExit Action, Action and OnEnter Action. you can implement different delegates.
 type Delegate interface {
 	// HandleEvent handles transitions
-	HandleEvent(action string, fromState string, toState string, args []interface{})
+	HandleEvent(action string, fromState string, toState string, args []interface{}) error
 }
 
 // StateMachine is a FSM that can handle transitions of a lot of objects. delegate and transitions are configured before use them.
@@ -63,16 +63,17 @@ func NewStateMachine(delegate Delegate, transitions ...Transition) *StateMachine
 }
 
 // Trigger fires a event. You must pass current state of the processing object, other info about this object can be passed with args.
-func (m *StateMachine) Trigger(currentState string, event string, args ...interface{}) Error {
+func (m *StateMachine) Trigger(currentState string, event string, args ...interface{}) error {
 	trans := m.findTransMatching(currentState, event)
 	if trans == nil {
 		return smError{event, currentState}
 	}
 
+	var err error
 	if trans.Action != "" {
-		m.delegate.HandleEvent(trans.Action, currentState, trans.To, args)
+		err = m.delegate.HandleEvent(trans.Action, currentState, trans.To, args)
 	}
-	return nil
+	return err
 }
 
 // findTransMatching gets corresponding transition according to current state and event.
