@@ -10,6 +10,7 @@ package fsm
 import (
 	"fmt"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
@@ -112,7 +113,13 @@ func (m *StateMachine) ExportWithDetails(outfile string, format string, layout s
 }
 
 func system(c string, dot string) error {
-	cmd := exec.Command(`/bin/sh`, `-c`, c)
+
+	var cmd *exec.Cmd
+	if runtime.GOOS == "windows" {
+		cmd = exec.Command(`cmd`, `/C`, c)
+	} else {
+		cmd = exec.Command(`/bin/sh`, `-c`, c)
+	}
 	cmd.Stdin = strings.NewReader(dot)
 	return cmd.Run()
 
